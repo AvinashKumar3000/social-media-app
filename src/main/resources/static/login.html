@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Pulse — Sign In or Register</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,560;0,9..144,680;1,9..144,500&family=Sora:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --canvas: #12121f;
+            --canvas-deep: #0b0b14;
+            --coral: #ff6b5c;
+            --coral-soft: #ffb3a3;
+            --peach: #ffe8d6;
+            --violet: #8b85c7;
+            --ink: #f5f3ff;
+            --ink-dim: #a8a5c4;
+            --line: rgba(245,243,255,0.10);
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --radius: 26px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background:
+                radial-gradient(ellipse 900px 500px at 82% -8%, rgba(255,107,92,0.16), transparent 60%),
+                radial-gradient(ellipse 700px 500px at -10% 30%, rgba(139,133,199,0.14), transparent 55%),
+                var(--canvas);
+            color: var(--ink);
+            font-family: 'Sora', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        h1, h2, h3, .wordmark { font-family: 'Fraunces', serif; }
+
+        .wordmark {
+            font-size: 32px; font-weight: 680; letter-spacing: -0.02em;
+            display: flex; align-items: center; gap: 10px;
+            margin-bottom: 32px;
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+        }
+        .wordmark .dot {
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--coral);
+            box-shadow: 0 0 0 0 rgba(255, 107, 92, 0.6);
+            animation: dotpulse 2.4s ease-out infinite;
+        }
+        @keyframes dotpulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,107,92,0.55); }
+            70% { box-shadow: 0 0 0 10px rgba(255,107,92,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,107,92,0); }
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--glass-bg);
+            border: 1px solid var(--line);
+            backdrop-filter: blur(24px);
+            border-radius: var(--radius);
+            padding: 40px 36px;
+            box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.6);
+            position: relative;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 560;
+            margin-bottom: 8px;
+            letter-spacing: -0.01em;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: var(--ink-dim);
+            margin-bottom: 28px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--ink-dim);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--ink);
+            font-family: inherit;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--coral);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(255, 107, 92, 0.15);
+        }
+
+        .btn {
+            font-family: 'Sora', sans-serif;
+            font-size: 15px; font-weight: 600;
+            padding: 14px 24px; border-radius: 100px;
+            cursor: pointer; border: 1px solid transparent;
+            width: 100%;
+            transition: all 0.18s ease;
+            text-align: center;
+            display: block;
+            margin-top: 28px;
+        }
+
+        .btn-solid {
+            background: var(--coral);
+            color: #1a0f0c;
+        }
+
+        .btn-solid:hover {
+            background: var(--coral-soft);
+            transform: translateY(-1px);
+        }
+
+        .btn-solid:active {
+            transform: translateY(0);
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 14px;
+            color: var(--ink-dim);
+        }
+
+        .auth-switch a {
+            color: var(--coral-soft);
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Ambient Glow Objects */
+        .glow {
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            border-radius: 50%;
+            background: var(--coral);
+            filter: blur(140px);
+            opacity: 0.12;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .glow-1 { top: 15%; right: 15%; }
+        .glow-2 { bottom: 15%; left: 15%; background: var(--violet); }
+
+        .hidden { display: none !important; }
+
+        /* Toast notifications styling */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .toast {
+            background: rgba(18, 18, 31, 0.95);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: var(--ink);
+            backdrop-filter: blur(14px);
+            font-size: 14px;
+            min-width: 300px;
+            max-width: 440px;
+            box-shadow: 0 20px 48px -10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            animation: slideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            transition: all 0.3s ease;
+        }
+        .toast.success { border-left: 4px solid #52c41a; }
+        .toast.error { border-left: 4px solid var(--coral); }
+        
+        .toast-message {
+            flex: 1;
+            line-height: 1.4;
+        }
+        
+        .toast-close {
+            cursor: pointer;
+            color: var(--ink-dim);
+            font-size: 16px;
+            transition: color 0.15s;
+        }
+        .toast-close:hover {
+            color: var(--ink);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(120%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @media (max-width: 480px) {
+            .auth-container {
+                padding: 32px 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Ambient Decor -->
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+
+    <div class="wordmark" onclick="window.location.href='/'">
+        <span class="dot"></span>pulse
+    </div>
+
+    <!-- Login Box -->
+    <div class="auth-container" id="loginBox">
+        <h2 class="auth-title">Welcome back</h2>
+        <p class="auth-subtitle">Sign in to sync with your close circle.</p>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label" for="loginEmail">Email Address</label>
+                <input class="form-control" type="email" id="loginEmail" required placeholder="you@domain.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="loginPassword">Password</label>
+                <input class="form-control" type="password" id="loginPassword" required placeholder="••••••••" minlength="5">
+            </div>
+            
+            <button class="btn btn-solid" type="submit">Sign In</button>
+        </form>
+        
+        <p class="auth-switch">
+            New to Pulse? <a onclick="toggleAuth(false)">Create an account</a>
+        </p>
+    </div>
+
+    <!-- Register Box -->
+    <div class="auth-container hidden" id="registerBox">
+        <h2 class="auth-title">Get started</h2>
+        <p class="auth-subtitle">Create a quiet room for your actual friends.</p>
+        
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+                <label class="form-label" for="registerName">Full Name</label>
+                <input class="form-control" type="text" id="registerName" required placeholder="Alex Mercer">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="registerEmail">Email Address</label>
+                <input class="form-control" type="email" id="registerEmail" required placeholder="you@domain.com">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label" for="registerPassword">Password</label>
+                <input class="form-control" type="password" id="registerPassword" required placeholder="At least 5 characters" minlength="5">
+            </div>
+            
+            <button class="btn btn-solid" type="submit">Create Account</button>
+        </form>
+        
+        <p class="auth-switch">
+            Already have an account? <a onclick="toggleAuth(true)">Sign in</a>
+        </p>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // Redirect if already logged in
+        if (localStorage.getItem('currentUser')) {
+            window.location.href = '/';
+        }
+
+        const API_BASE = '/api';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const prefMode = sessionStorage.getItem('preferred_auth_mode');
+            if (prefMode === 'register') {
+                toggleAuth(false);
+            } else {
+                toggleAuth(true);
+            }
+            sessionStorage.removeItem('preferred_auth_mode');
+        });
+
+        function toggleAuth(showLogin) {
+            const loginBox = document.getElementById('loginBox');
+            const registerBox = document.getElementById('registerBox');
+
+            if (showLogin) {
+                loginBox.classList.remove('hidden');
+                registerBox.classList.add('hidden');
+            } else {
+                loginBox.classList.add('hidden');
+                registerBox.classList.remove('hidden');
+            }
+        }
+
+        // Show toast feedback
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            toast.innerHTML = `
+                <div class="toast-message">${message}</div>
+                <div class="toast-close" onclick="this.parentElement.remove()">✕</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto remove toast after 4 seconds
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (password.length < 5) {
+                showToast('Password must be at least 5 characters', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('Login successful! Redirecting...', 'success');
+                    localStorage.setItem('currentUser', JSON.stringify(result.data));
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 1200);
+                } else {
+                    showToast(result.message || 'Login failed. Please check your credentials.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Unable to connect to server. Is the backend running?', 'error');
+            }
+        }
+
+        async function handleRegister(event) {
+            event.preventDefault();
+            
+            const name = document.getElementById('registerName').value.trim();
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+
+            if (password.length < 5) {
+                showToast('Password must be at least 5 characters', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showToast('Registration successful! Logging you in...', 'success');
+                    localStorage.setItem('currentUser', JSON.stringify(result.data));
+                    setTimeout(() => {
+                        window.location.href = '/index.html';
+                    }, 1200);
+                } else {
+                    showToast(result.message || 'Registration failed. Check inputs.', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('Unable to connect to server. Is the backend running?', 'error');
+            }
+        }
+    </script>
+</body>
+</html>
